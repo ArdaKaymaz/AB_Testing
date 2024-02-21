@@ -72,26 +72,32 @@ check_df(dft)
 
 ### Step 3: Checking and Suppressing Outliers ###
 
-def outlier_thresholds(dataframe, variable):
-    quartile1 = dataframe[variable].quantile(0.01)
-    quartile3 = dataframe[variable].quantile(0.99)
+def outlier_thresholds(dataframe, variable, q1=0.25, q3=0.75):
+    quartile1 = dataframe[variable].quantile(q1)
+    quartile3 = dataframe[variable].quantile(q3)
     interquantile_range = quartile3 - quartile1
     up_limit = quartile3 + 1.5 * interquantile_range
     low_limit = quartile1 - 1.5 * interquantile_range
-    return low_limit, up_limit
+    return low_limit.round(), up_limit.round()
+
 def replace_with_thresholds(dataframe, variable):
     low_limit, up_limit = outlier_thresholds(dataframe, variable)
     dataframe.loc[(dataframe[variable] < low_limit), variable] = low_limit
     dataframe.loc[(dataframe[variable] > up_limit), variable] = up_limit
 
+def check_outlier(dataframe, col_name, q1=0.01, q3=0.99):
+
+    low_limit, up_limit = outlier_thresholds(dataframe, col_name, q1, q3)
+    if dataframe[(dataframe[col_name] > up_limit) | (dataframe[col_name] < low_limit)].any(axis=None):
+        return True
+    else:
+        return False
+
 dfc["Purchase"].mean()
 dft["Purchase"].mean()
 
-replace_with_thresholds(dfc, "Purchase")
-replace_with_thresholds(dft, "Purchase")
-
-dfc["Purchase"].mean()
-dft["Purchase"].mean()
+check_outlier(dfc, "Purchase", 0.25, 0.75)
+check_outlier(dft, "Purchase", 0.25, 0.75)
 
 ### Step 4: Concatenate Data ###
 
