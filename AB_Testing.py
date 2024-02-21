@@ -84,12 +84,14 @@ def replace_with_thresholds(dataframe, variable):
     dataframe.loc[(dataframe[variable] < low_limit), variable] = low_limit
     dataframe.loc[(dataframe[variable] > up_limit), variable] = up_limit
 
-dfc.describe().T
-dft.describe().T
+dfc["Purchase"].mean()
+dft["Purchase"].mean()
+
 replace_with_thresholds(dfc, "Purchase")
 replace_with_thresholds(dft, "Purchase")
-dfc.describe().T
-dft.describe().T
+
+dfc["Purchase"].mean()
+dft["Purchase"].mean()
 
 ### Step 4: Concatenate Data ###
 
